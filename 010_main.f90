@@ -3,7 +3,7 @@ module variables
 
     integer, parameter :: max_itr = 10
     integer, parameter :: ni = 12
-    integer, parameter :: nim1 = 12-1
+    integer, parameter :: nim1 = ni-1
     integer, parameter :: ns = 53
 
     real(16) :: X(ni), Dxep(ni), Dxpw(ni), Sew(ni), Xu(ni)
@@ -40,6 +40,9 @@ module variables
 
     real(16), parameter :: beta   = 0.207d-3
     real(16), parameter :: gravit = 9.8
+    
+    real(16), parameter :: xmax = 1.0
+    real(16), parameter :: ymax = 1.0
     
 end module variables
 
@@ -99,11 +102,84 @@ subroutine calct()
 end subroutine calct
 
 subroutine grid()
+    use variables
     implicit none
 
-    print *, 'bbb'
+    integer :: i, nig
+    real(16) :: dx
+
+    nig = ni - 2    ! = 11
+    dx = xmax/float(nig) ! 1.0/10 = 0.1
+
+    ! X = [-0.05, 0.05, 0.15, ... 1.05]
+    X(1) = -0.5*dx
+    X(2) = -X(1)
+    do i = 3, ni
+        X(i) = X(i-1) + dx
+    end do
 
 end subroutine grid
+
+
+subroutine init()
+    use variables
+    implicit none
+    
+    integer :: i
+   
+    ! Assign dx value
+    DXPW(1) = 0.0
+    DXEP(ni) = 0.0
+    do i = 1, nim1
+        DXEP(i) = X(i+1) - X(i)
+        DXPW(i+1) = DXEP(i)
+    end do
+
+    ! Averaged value of dx
+    SEW(1) = 0.0
+    SEW(ni) = 0.0
+    do i = 2, nim1
+        SEW(i) = 0.5*(DXEP(i) + DXPW(i))
+    end do
+
+    ! Posion of midpoint
+    XU(1) = 0.0
+    do i = 2, ni
+        XU(i) = 0.5*(X(i) + X(i-1))
+    end do
+    ! print '(12(f6.2))', XU
+
+    DXPWU(1) = 0.0
+    DXPWU(2) = 0.0
+    DXEPU(1) = 0.0
+    DXEPU(ni) = 0.0
+    do i = 1, nim1
+        DXEPU(i) = XU(i+1) - XU(i)
+        DXPWU(i+1) = DXEPU(i)
+    end do
+    ! print '(12(f6.2))', DXEPU
+    ! print '(12(f6.2))', DXPWU
+
+    SEWU(1) = 0.0
+    do i = 2, ni
+        SEWU(i) = (X(i) - X(i-1))
+    end do
+    ! print '(12(f6.2))', SEWU
+
+    do i = 1, ni
+        U(i) = 0.0
+        P(i) = 0.0
+        PP(i) = 0.0
+        T(i) = 300
+        SU(i) = 0.0
+        SP(i) = 0.0
+    end do
+
+    do i = 1, ni
+        DU(i) = 0.0
+    end do   
+
+end subroutine init
 
 
 subroutine tdma(istart, PHI)

@@ -58,12 +58,12 @@ program main
       
       !   ------- chemistry section ---------
 
-      !call get_next_TY(p_cfd, t_cfd, y_cfd, delta_t_cfd, tols_cfd)
-      !
-      !write(6, *) 'temperature [K]'
-      !write(6, *) t_cfd
-      !write(6, *) 'mass fractions [-]'
-      !write(6, *) y_cfd
+      call get_next_TY(p_cfd, t_cfd, y_cfd, delta_t_cfd, tols_cfd)
+      
+      write(6, *) 'temperature [K]'
+      write(6, *) t_cfd
+      write(6, *) 'mass fractions [-]'
+      write(6, *) y_cfd
       
       ! call timeloop()
       
