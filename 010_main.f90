@@ -44,7 +44,14 @@ module variables
     real(16), parameter :: xmax = 1.0
     real(16), parameter :: ymax = 1.0
 
-    
+    real(16) mf_chem(ns)
+    !
+    data mf_chem /0.00E+00,0.00E+00,0.00E+00,2.20E-01,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00, &
+                    0.00E+00,0.00E+00,0.00E+00,0.00E+00,5.51E-02,0.00E+00,0.00E+00,0.00E+00,0.00E+00, &
+                    0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00, &
+                    0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00, &
+                    0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00, &
+                    0.00E+00,0.00E+00,7.25E-01,0.00E+00,0.00E+00,0.00E+00,0.00E+00,0.00E+00/
     
 end module variables
 
@@ -52,12 +59,21 @@ subroutine initialize_variables()
     use variables
     implicit none
 
+    integer :: i, j
+
     U = 0.0
     P = 0.0
     PP = 0.0
     T = 300.0
     T(ni) =600.0
     W = 0.0
+
+    do i = 1, ni
+        do j = 1, ns
+            W(i, j) = mf_chem(j)
+        end do
+    end do
+    
 
 end subroutine initialize_variables
     
