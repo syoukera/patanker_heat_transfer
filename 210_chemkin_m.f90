@@ -18,12 +18,12 @@ module chemkin_params
 
     ! chemkin work array
     integer,      allocatable :: int_ckwk(:)
-    real(8),      allocatable :: real_ckwk(:)
+    real(16),      allocatable :: real_ckwk(:)
     character(6), allocatable :: char_ckwk(:)*16
     
     ! transport work array
     integer,      allocatable :: int_tpwk(:)
-    real(8),      allocatable :: real_tpwk(:)
+    real(16),      allocatable :: real_tpwk(:)
 
     ! index of chemistry
     integer mm ! number of elements
@@ -81,7 +81,7 @@ module chemkin_params
 
         ! temporary work array
         integer      :: int_ckwk_temp(len_int_cklen)
-        real(8)      :: real_ckwk_temp(len_real_cklen)
+        real(16)      :: real_ckwk_temp(len_real_cklen)
         character(6) :: char_ckwk_temp(len_char_cklen)*16
 
         call ckinit(len_int_cklen, len_real_cklen, len_char_cklen, unit_cklink, &
@@ -139,22 +139,22 @@ module chemkin_params
 !
 !        use chemkin_params
         ! input values
-        real(8), intent(in) :: t_cfd     ! K
-        real(8), intent(in) :: p_cfd     ! Pa
-        real(8), intent(in) :: y_cfd(kk) ! Mass fractions
-        real(8) x_temp,x_t, xm_t
+        real(16), intent(in) :: t_cfd     ! K
+        real(16), intent(in) :: p_cfd     ! Pa
+        real(16), intent(in) :: y_cfd(kk) ! Mass fractions
+        real(16) x_temp,x_t, xm_t
 
         ! output transport data
         ! mixture diffusion coefficient [CM**2/S]
-        real(8), intent(out) :: D_mix(kk) 
+        real(16), intent(out) :: D_mix(kk) 
         ! mixture thermal conductivity [ERG/CM*K*S]
-        real(8), intent(out) :: Lambda_mix
+        real(16), intent(out) :: Lambda_mix
         !  mean specific heat at constant pressure [ergs/(gm*K)]
-        real(8), intent(out) :: c_p
+        real(16), intent(out) :: c_p
 
         ! variables for calculations
-        real(8) p_calc ! dyne/cm**2
-        real(8) :: x_calc(kk) ! Mole fractions
+        real(16) p_calc ! dyne/cm**2
+        real(16) :: x_calc(kk) ! Mole fractions
         p_calc = p_cfd*10.0d0       ! Pa to dyne/cm**2
 !
         call ckytx(y_cfd, int_ckwk(ipick), real_ckwk(iprck), x_calc)
@@ -167,11 +167,11 @@ module chemkin_params
 
     subroutine get_next_TY(p_cfd, t_cfd, y_cfd, delta_t_cfd, tols_cfd)
 
-        real(8), intent(inout) :: t_cfd
-        real(8), intent(in)    :: p_cfd
-        real(8), intent(inout) :: y_cfd(kk)
-        real(8), intent(in)    :: delta_t_cfd
-        real(8), intent(in)    :: tols_cfd(4)
+        real(16), intent(inout) :: t_cfd
+        real(16), intent(in)    :: p_cfd
+        real(16), intent(inout) :: y_cfd(kk)
+        real(16), intent(in)    :: delta_t_cfd
+        real(16), intent(in)    :: tols_cfd(4)
 
         integer :: icase = 1
         integer  lin, lout, lsave, lign, lrest
