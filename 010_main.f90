@@ -43,6 +43,8 @@ module variables
     
     real(16), parameter :: xmax = 1.0
     real(16), parameter :: ymax = 1.0
+
+    
     
 end module variables
 
@@ -62,6 +64,7 @@ end subroutine initialize_variables
 
 program main
     use variables
+    use chemkin_params, only: initialize_chemkin_workarray
     implicit none
 
     integer :: i
@@ -69,6 +72,7 @@ program main
     ! integer :: max_itr = 10
 
     ! initialize
+    call initialize_chemkin_workarray()
     call grid
     call initialize_variables()
 
@@ -77,19 +81,33 @@ program main
         call calct
     end do
 
+    print *, T
+
     print *, 'Solution diverges or needs more iterations'
 
 end program main
 
 subroutine calct()
     use variables
+    use chemkin_params, only: get_tranport_data
+
     implicit none
 
     integer :: i
+    ! output transport data
+    ! mixture diffusion coefficient [CM**2/S]
+    real(16) :: D_mix(ns) 
+    ! mixture thermal conductivity [ERG/CM*K*S]
+    real(16) :: Lambda_mix
+    !  mean specific heat at constant pressure [ergs/(gm*K)]
+    real(16) :: c_p
 
     do i = 2, nim1
-        Ae(i) = 0.0
-        Aw(i) = 0.0
+        call get_tranport_data(T(i), P(i), W(:, i), D_mix, Lambda_mix, c_p)
+
+        Ae(i) = Lambda_mix/Dxep(i)
+        Aw(i) = Lambda_mix/Dxpw(i)
+        Ap(i) = Ae(i) + Aw(i)
         Sp(i) = 0.0
         Su(i) = 0.0
     end do
